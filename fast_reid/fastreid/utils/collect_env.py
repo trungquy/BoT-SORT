@@ -17,7 +17,10 @@ import PIL
 import numpy as np
 import torch
 import torchvision
-from tabulate import tabulate
+try:
+    from tabulate import tabulate
+except ImportError:
+    pass
 
 __all__ = ["collect_env_info"]
 

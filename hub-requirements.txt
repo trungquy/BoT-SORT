@@ -1,0 +1,11 @@
+torch
+torchvision
+opencv-python
+numpy
+scipy
+lap
+cython_bbox
+pyyaml
+yacs
+faiss-gpu
+pillow

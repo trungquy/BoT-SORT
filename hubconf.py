@@ -1,8 +1,7 @@
-dependencies = ['torch', 'cv2', 'numpy']
-
 import os
 import torch
 import torch.nn as nn
+from hub_utils import check_requirements
 
 
 VERSION = 'v0.1.0'
@@ -57,6 +56,7 @@ def botsort(fps: float, with_reid: bool, cmc_method: str = 'orb', cmc_downscale:
         cmc_downscale (int): Downscale factor for CMC. Higher values are faster but less accurate
         mot_year (int): Pretrained model for MOT17 or MOT20
     """
+    check_requirements()
     from tracker.bot_sort import BoTSORT
 
     if mot_year not in (17, 20):

@@ -12,7 +12,10 @@ from collections import OrderedDict
 import numpy as np
 import torch
 import torch.nn.functional as F
-from sklearn import metrics
+try:
+    from sklearn import metrics
+except ImportError:
+    pass
 
 from fast_reid.fastreid.utils import comm
 from fast_reid.fastreid.utils.compute_dist import build_dist

@@ -8,8 +8,14 @@ import copy
 import logging
 import os
 
-from tabulate import tabulate
-from termcolor import colored
+try:
+    from tabulate import tabulate
+except ImportError:
+    pass
+try:
+    from termcolor import colored
+except ImportError:
+    pass
 
 logger = logging.getLogger(__name__)
 

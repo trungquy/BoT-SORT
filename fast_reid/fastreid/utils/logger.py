@@ -5,8 +5,11 @@ import os
 import sys
 import time
 from collections import Counter
+try:
+    from termcolor import colored
+except ImportError:
+    pass
 
-from termcolor import colored
 
 from .file_io import PathManager
 

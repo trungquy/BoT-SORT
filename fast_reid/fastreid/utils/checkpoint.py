@@ -11,7 +11,10 @@ from typing import Optional, List, Dict, NamedTuple, Tuple, Iterable
 import numpy as np
 import torch
 import torch.nn as nn
-from termcolor import colored
+try:
+    from termcolor import colored
+except ImportError:
+    pass
 from torch.nn.parallel import DistributedDataParallel, DataParallel
 
 from fast_reid.fastreid.utils.file_io import PathManager

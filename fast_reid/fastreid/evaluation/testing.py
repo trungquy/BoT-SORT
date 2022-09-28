@@ -5,8 +5,14 @@ import sys
 from collections import Mapping, OrderedDict
 
 import numpy as np
-from tabulate import tabulate
-from termcolor import colored
+try:
+    from tabulate import tabulate
+except ImportError:
+    pass
+try:
+    from termcolor import colored
+except ImportError:
+    pass
 
 
 def print_csv_format(results):

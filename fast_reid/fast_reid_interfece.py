@@ -1,6 +1,9 @@
 import cv2
 import numpy as np
-import matplotlib.pyplot as plt
+try:
+    import matplotlib.pyplot as plt
+except ImportError:
+    pass
 import torch
 import torch.nn.functional as F
 # from torch.backends import cudnn
@@ -122,28 +125,28 @@ class FastReIDInterface:
         for patches in batch_patches:
 
             # Run model
-            patches_ = torch.clone(patches)
+            # patches_ = torch.clone(patches)
             pred = self.model(patches)
             pred[torch.isinf(pred)] = 1.0
 
             feat = postprocess(pred)
 
-            nans = np.isnan(np.sum(feat, axis=1))
-            if np.isnan(feat).any():
-                for n in range(np.size(nans)):
-                    if nans[n]:
-                        # patch_np = patches[n, ...].squeeze().transpose(1, 2, 0).cpu().numpy()
-                        patch_np = patches_[n, ...]
-                        patch_np_ = torch.unsqueeze(patch_np, 0)
-                        pred_ = self.model(patch_np_)
+            # nans = np.isnan(np.sum(feat, axis=1))
+            # if np.isnan(feat).any():
+            #     for n in range(np.size(nans)):
+            #         if nans[n]:
+            #             # patch_np = patches[n, ...].squeeze().transpose(1, 2, 0).cpu().numpy()
+            #             patch_np = patches_[n, ...]
+            #             patch_np_ = torch.unsqueeze(patch_np, 0)
+            #             pred_ = self.model(patch_np_)
 
-                        patch_np = torch.squeeze(patch_np).cpu()
-                        patch_np = torch.permute(patch_np, (1, 2, 0)).int()
-                        patch_np = patch_np.numpy()
+            #             patch_np = torch.squeeze(patch_np).cpu()
+            #             patch_np = torch.permute(patch_np, (1, 2, 0)).int()
+            #             patch_np = patch_np.numpy()
 
-                        plt.figure()
-                        plt.imshow(patch_np)
-                        plt.show()
+                        # plt.figure()
+                        # plt.imshow(patch_np)
+                        # plt.show()
 
             features = np.vstack((features, feat))
 
