@@ -1,3 +1,5 @@
+dependencies = ['torch', 'cv2']
+
 import os
 import torch
 import torch.nn as nn
