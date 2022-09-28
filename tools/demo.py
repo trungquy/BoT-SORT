@@ -14,7 +14,7 @@ from yolox.data.data_augment import preproc
 from yolox.exp import get_exp
 from yolox.utils import fuse_model, get_model_info, postprocess
 from yolox.utils.visualize import plot_tracking
-from tracker.bot_sort import BoTSORT
+from hubconf import botsort
 from tracker.tracking_utils.timer import Timer
 
 
@@ -34,7 +34,7 @@ def make_parser():
     parser.add_argument("--device", default="gpu", type=str, help="device to run our model, can either be cpu or gpu")
     parser.add_argument("--conf", default=None, type=float, help="test conf")
     parser.add_argument("--nms", default=None, type=float, help="test nms threshold")
-    parser.add_argument("--tsize", default=None, type=int, help="test img size")
+    parser.add_argument("--tsize", default=768, type=int, help="test img size")
     parser.add_argument("--fps", default=30, type=int, help="frame rate (fps)")
     parser.add_argument("--fp16", dest="fp16", default=False, action="store_true",help="Adopting mix precision evaluating.")
     parser.add_argument("--fuse", dest="fuse", default=False, action="store_true", help="Fuse conv and bn for testing.")
@@ -151,7 +151,7 @@ def image_demo(predictor, vis_folder, current_time, args):
         files = [args.path]
     files.sort()
 
-    tracker = BoTSORT(args, frame_rate=args.fps)
+    tracker = botsort(fps=30, with_reid=args.with_reid, cmc_downscale=6)
 
     timer = Timer()
     results = []
@@ -169,7 +169,7 @@ def image_demo(predictor, vis_folder, current_time, args):
             detections[:, :4] /= scale
 
             # Run tracker
-            online_targets = tracker.update(detections, img_info['raw_img'])
+            online_targets = tracker(detections, img_info['raw_img'])
 
             online_tlwhs = []
             online_ids = []
@@ -231,7 +231,7 @@ def imageflow_demo(predictor, vis_folder, current_time, args):
     vid_writer = cv2.VideoWriter(
         save_path, cv2.VideoWriter_fourcc(*"mp4v"), fps, (int(width), int(height))
     )
-    tracker = BoTSORT(args, frame_rate=args.fps)
+    tracker = botsort(fps=30, with_reid=args.with_reid, cmc_downscale=6)
     timer = Timer()
     frame_id = 0
     results = []
@@ -250,7 +250,7 @@ def imageflow_demo(predictor, vis_folder, current_time, args):
                 detections[:, :4] /= scale
 
                 # Run tracker
-                online_targets = tracker.update(detections, img_info["raw_img"])
+                online_targets = tracker(detections, img_info["raw_img"])
 
                 online_tlwhs = []
                 online_ids = []
