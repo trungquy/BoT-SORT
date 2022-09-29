@@ -1,6 +1,6 @@
 # BoT-SORT
 
-This is a fork of bearpaw/pytorch-pose which is modified for use as a Python package.
+This is a fork of bearpaw/pytorch-pose which is modified for use as a Python package. Not affiliated with the original authors.
 
 > [**BoT-SORT: Robust Associations Multi-Pedestrian Tracking**](https://arxiv.org/abs/2206.14651)
 >
