@@ -1,6 +1,6 @@
 # BoT-SORT
 
-This is a fork of NirAharon/BoT-SORT which is modified for use as a Python package and is not affiliated with the original authors.
+This is a fork of [NirAharon/BoT-SORT](https://github.com/NirAharon/BoT-SORT) which is modified for use as a Python package and is not affiliated with the original authors.
 
 ---
 
