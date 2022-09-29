@@ -1,11 +1,19 @@
-import os
+import re
+from pathlib import Path
 import torch
-import torch.nn as nn
-from hub_utils import check_requirements
-from src.botsort.tracker.bot_sort import BoTSORT
+from botsort.tracker.bot_sort import BoTSORT
 
+DIR = Path(__file__).parent
 
-VERSION = 'v0.1.0'
+# Load the version from setup.py
+version = None
+with open(DIR.parent.parent / 'setup.py', 'r') as f:
+    for line in f:
+        if 'version=' in line:
+            # Greedily match between quotes with \=["'](.*)["']
+            version = re.search(r'=["\'](.*)["\']', line).group(1)
+            VERSION = f'v{version}'
+            break
 
 
 def _default_config():
@@ -17,7 +25,7 @@ def _default_config():
             return DotDict(super(DotDict, self).copy())
 
     return DotDict(
-        device = 'gpu',
+        device = 'cpu',
         fp16 = True,
         fuse = True,
         trt = False,
@@ -39,16 +47,7 @@ def _default_config():
     )
 
 
-class Wrapper(nn.Module):
-    def __init__(self, model):
-        super().__init__()
-        self.model = model
-
-    def forward(self, detections, image):
-        return self.model.update(detections, image)
-
-
-def botsort(fps: float, with_reid: bool, cmc_method: str = 'orb', cmc_downscale: int = 4, mot_year: int = 17):
+def construct_botsort(fps: float, with_reid: bool, cmc_method: str = 'orb', cmc_downscale: int = 4, mot_year: int = 17, device='cpu'):
     """Constructs a Botsort model
     Args:
         fps (float): Frames per second of the video
@@ -56,44 +55,35 @@ def botsort(fps: float, with_reid: bool, cmc_method: str = 'orb', cmc_downscale:
         cmc_method (str): CMC method to use, either orb or sift
         cmc_downscale (int): Downscale factor for CMC. Higher values are faster but less accurate
         mot_year (int): Pretrained model for MOT17 or MOT20
+        device (str): Device to use, 'cpu', 'cuda', etc.
     """
-    check_requirements()
-
     if mot_year not in (17, 20):
         raise ValueError(f'MOT year must be 17 or 20, got {mot_year}')
     if cmc_method not in ('orb', 'sift', 'ecc'):
         raise ValueError(f'CMC method must be one of {{orb, sift, ecc}}, got {cmc_method}')
     
     conf = _default_config()
+    conf.device = device
     conf.with_reid = with_reid
     conf.cmc_method = cmc_method
     conf.cmc_downscale = cmc_downscale
-    print('Using downscale of {}'.format(cmc_downscale))
 
     if conf.with_reid:
         url = f'https://github.com/ashwhall/BoT-SORT/releases/download/{VERSION}/mot{mot_year}_sbs_S50.pth'
         torch.hub.load_state_dict_from_url(url, progress=True, map_location=torch.device('cpu'))
 
-        conf.fast_reid_config = f'fast_reid/configs/MOT{mot_year}/sbs_S50.yml'
-        conf.fast_reid_weights = os.path.join(torch.hub.get_dir(), 'checkpoints', os.path.basename(url))
+        conf.fast_reid_config = str(DIR / 'fast_reid' / 'configs' / f'MOT{mot_year}' / 'sbs_S50.yml')
+        conf.fast_reid_weights = str(Path(torch.hub.get_dir()) / 'checkpoints' / Path(url).name)
     
-    model = BoTSORT(conf, frame_rate=fps)
-    wrapper = Wrapper(model)
-    return wrapper
+    return BoTSORT(conf, frame_rate=fps)
 
 
 def _test_botsort():
     import numpy as np
 
-    model = botsort(30, True)
-    model.eval()
+    botsort = construct_botsort(30, True, device='cuda')
 
     detections = np.array([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]])
     image = np.zeros((768, 768, 3), dtype=np.uint8)
 
-    print('Out:', model(detections, image))
-
-
-if __name__ == '__main__':
-    _test_botsort()
-
+    print('Out:', botsort.update(detections, image))
