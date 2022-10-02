@@ -5,7 +5,7 @@
 import cv2
 import numpy as np
 
-from yolox.utils import adjust_box_anns
+from botsort.yolox.utils import adjust_box_anns
 
 import random
 

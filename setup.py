@@ -6,7 +6,7 @@ def load_requirements(path='requirements.txt', comment_char='#'):
     return [line for line in lines if not line.startswith(comment_char)]
 
 setup(
-    name='BoT-SORT',
+    name='botsort',
     version='0.1.0',
     maintainer='Ash Hall',
     url='https://github.com/ashwhall/BoT-SORT',

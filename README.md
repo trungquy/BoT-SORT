@@ -2,6 +2,22 @@
 
 This is a fork of [NirAharon/BoT-SORT](https://github.com/NirAharon/BoT-SORT) which is modified for use as a Python package and is not affiliated with the original authors.
 
+Some small changes were made to the tracking parameters, but these are customisable using the config object.
+
+#### Basic Usage:
+
+```python
+import numpy as np
+from botsort import BotSortConfig, construct_botsort
+
+conf = BotSortConfig(fps=30, with_reid=True, device='cuda')
+botsort = construct_botsort(conf)
+
+image = np.zeros((608, 608, 3), dtype=np.uint8)
+detections = np.array([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]])
+online_tracks = botsort.update(detections, image)
+```
+
 ---
 
 > [**BoT-SORT: Robust Associations Multi-Pedestrian Tracking**](https://arxiv.org/abs/2206.14651)

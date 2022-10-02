@@ -10,11 +10,11 @@ from loguru import logger
 
 sys.path.append('.')
 
-from yolox.data.data_augment import preproc
-from yolox.exp import get_exp
-from yolox.utils import fuse_model, get_model_info, postprocess
-from yolox.utils.visualize import plot_tracking
-from hubconf import botsort
+from botsort.yolox.data.data_augment import preproc
+from botsort.yolox.exp import get_exp
+from botsort.yolox.utils import fuse_model, get_model_info, postprocess
+from botsort.yolox.utils.visualize import plot_tracking
+from botsort import construct_botsort
 from botsort.tracker.tracking_utils.timer import Timer
 
 
@@ -34,7 +34,7 @@ def make_parser():
     parser.add_argument("--device", default="gpu", type=str, help="device to run our model, can either be cpu or gpu")
     parser.add_argument("--conf", default=None, type=float, help="test conf")
     parser.add_argument("--nms", default=None, type=float, help="test nms threshold")
-    parser.add_argument("--tsize", default=768, type=int, help="test img size")
+    parser.add_argument("--tsize", default=608, type=int, help="test img size")
     parser.add_argument("--fps", default=30, type=int, help="frame rate (fps)")
     parser.add_argument("--fp16", dest="fp16", default=False, action="store_true",help="Adopting mix precision evaluating.")
     parser.add_argument("--fuse", dest="fuse", default=False, action="store_true", help="Fuse conv and bn for testing.")
@@ -52,6 +52,7 @@ def make_parser():
 
     # CMC
     parser.add_argument("--cmc-method", default="orb", type=str, help="cmc method: files (Vidstab GMC) | orb | ecc")
+    parser.add_argument("--cmc-im-threshold", default=False, action="store_true", help="Whether to apply cv2.adaptiveThreshold to the image before CMC")
 
     # ReID
     parser.add_argument("--with-reid", dest="with_reid", default=False, action="store_true", help="test mot20.")
@@ -140,7 +141,11 @@ class Predictor(object):
             outputs = self.model(img)
             if self.decoder is not None:
                 outputs = self.decoder(outputs, dtype=outputs.type())
+            import numpy as np
+            np.set_printoptions(precision=3, suppress=True)
+            # print(outputs.detach().cpu().numpy())
             outputs = postprocess(outputs, self.num_classes, self.confthre, self.nmsthre)
+            # print(outputs[0].detach().cpu().numpy())
         return outputs, img_info
 
 
@@ -151,7 +156,7 @@ def image_demo(predictor, vis_folder, current_time, args):
         files = [args.path]
     files.sort()
 
-    tracker = botsort(fps=30, with_reid=args.with_reid)
+    tracker = construct_botsort(fps=30, with_reid=args.with_reid)
 
     timer = Timer()
     results = []
@@ -169,7 +174,7 @@ def image_demo(predictor, vis_folder, current_time, args):
             detections[:, :4] /= scale
 
             # Run tracker
-            online_targets = tracker(detections, img_info['raw_img'])
+            online_targets = tracker.update(detections, img_info['raw_img'])
 
             online_tlwhs = []
             online_ids = []
@@ -231,7 +236,7 @@ def imageflow_demo(predictor, vis_folder, current_time, args):
     vid_writer = cv2.VideoWriter(
         save_path, cv2.VideoWriter_fourcc(*"mp4v"), fps, (int(width), int(height))
     )
-    tracker = botsort(fps=30, with_reid=args.with_reid)
+    tracker = construct_botsort(fps=30, with_reid=args.with_reid)
     timer = Timer()
     frame_id = 0
     results = []
@@ -250,7 +255,7 @@ def imageflow_demo(predictor, vis_folder, current_time, args):
                 detections[:, :4] /= scale
 
                 # Run tracker
-                online_targets = tracker(detections, img_info["raw_img"])
+                online_targets = tracker.update(detections, img_info["raw_img"])
 
                 online_tlwhs = []
                 online_ids = []
@@ -276,8 +281,10 @@ def imageflow_demo(predictor, vis_folder, current_time, args):
             if args.save_result:
                 vid_writer.write(online_im)
             frame = online_im
-            # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            frame = cv2.GaussianBlur(frame, (5, 5), 1.5)
             # frame = cv2.adaptiveThreshold(frame, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 11, 2)
+            frame = cv2.adaptiveThreshold(frame, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 11, 2)
             # threshold
             # frame = cv2.adaptiveThreshold(frame, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY,11,2)
             cv2.imshow('online_im', frame)

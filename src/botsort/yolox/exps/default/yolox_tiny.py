@@ -4,7 +4,7 @@
 
 import os
 
-from yolox.exp import Exp as MyExp
+from botsort.yolox.exp import Exp as MyExp
 
 
 class Exp(MyExp):

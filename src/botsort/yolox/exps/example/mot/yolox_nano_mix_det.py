@@ -5,8 +5,8 @@ import torch
 import torch.nn as nn
 import torch.distributed as dist
 
-from yolox.exp import Exp as MyExp
-from yolox.data import get_yolox_datadir
+from botsort.yolox.exp import Exp as MyExp
+from botsort.yolox.data import get_yolox_datadir
 
 class Exp(MyExp):
     def __init__(self):
@@ -38,7 +38,7 @@ class Exp(MyExp):
                     m.eps = 1e-3
                     m.momentum = 0.03
         if "model" not in self.__dict__:
-            from yolox.models import YOLOX, YOLOPAFPN, YOLOXHead
+            from botsort.yolox.models import botsort.yolox, YOLOPAFPN, YOLOXHead
             in_channels = [256, 512, 1024]
             # NANO model use depthwise = True, which is main difference.
             backbone = YOLOPAFPN(self.depth, self.width, in_channels=in_channels, depthwise=True)
@@ -50,7 +50,7 @@ class Exp(MyExp):
         return self.model
 
     def get_data_loader(self, batch_size, is_distributed, no_aug=False):
-        from yolox.data import (
+        from botsort.yolox.data import (
             MOTDataset,
             TrainTransform,
             YoloBatchSampler,
@@ -112,7 +112,7 @@ class Exp(MyExp):
         return train_loader
 
     def get_eval_loader(self, batch_size, is_distributed, testdev=False):
-        from yolox.data import MOTDataset, ValTransform
+        from botsort.yolox.data import MOTDataset, ValTransform
 
         valdataset = MOTDataset(
             data_dir=os.path.join(get_yolox_datadir(), "mot"),
@@ -144,7 +144,7 @@ class Exp(MyExp):
         return val_loader
 
     def get_evaluator(self, batch_size, is_distributed, testdev=False):
-        from yolox.evaluators import COCOEvaluator
+        from botsort.yolox.evaluators import COCOEvaluator
 
         val_loader = self.get_eval_loader(batch_size, is_distributed, testdev=testdev)
         evaluator = COCOEvaluator(

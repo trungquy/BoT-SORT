@@ -6,16 +6,18 @@ except ImportError:
 import numpy as np
 import copy
 
-# TODO: Why is it so unstable on the track running footage? The detector/extractor need to be more robust.
+
 class GMC:
-    def __init__(self, method='orb', downscale=2, verbose=None):
+    def __init__(self, method='orb', downscale=2, threshold=False, verbose=None):
         super(GMC, self).__init__()
+        print('using method: ' + method)
 
         self.method = method
         self.downscale = max(1, int(downscale))
+        self.threshold = threshold
 
         if self.method == 'orb':
-            self.detector = cv2.FastFeatureDetector_create(20)
+            self.detector = cv2.FastFeatureDetector_create(50)
             self.extractor = cv2.ORB_create(nfeatures=100)
             self.matcher = cv2.BFMatcher(cv2.NORM_HAMMING)
 
@@ -25,7 +27,7 @@ class GMC:
             self.matcher = cv2.BFMatcher(cv2.NORM_L2)
 
         elif self.method == 'ecc':
-            number_of_iterations = 500
+            number_of_iterations = 5000
             termination_eps = 1e-6
             self.warp_mode = cv2.MOTION_EUCLIDEAN
             self.criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, number_of_iterations, termination_eps)
@@ -119,7 +121,8 @@ class GMC:
             width = width // self.downscale
             height = height // self.downscale
         # Threshold the image to get a binary image
-        frame = cv2.adaptiveThreshold(frame, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY,11,2)
+        if self.threshold:
+            frame = cv2.adaptiveThreshold(frame, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 11, 2)
 
         # find the keypoints
         mask = np.zeros_like(frame)
@@ -131,6 +134,11 @@ class GMC:
                 mask[tlbr[1]:tlbr[3], tlbr[0]:tlbr[2]] = 0
 
         keypoints = self.detector.detect(frame, mask)
+        # Randomly sample up to 1000 keypoints
+        print(len(keypoints))
+        if len(keypoints) > 1000:
+            import random
+            keypoints = random.sample(keypoints, 1000)
 
         # compute the descriptors
         keypoints, descriptors = self.extractor.compute(frame, keypoints)

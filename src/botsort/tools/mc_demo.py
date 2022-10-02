@@ -10,10 +10,10 @@ from loguru import logger
 
 sys.path.append('.')
 
-from yolox.data.data_augment import preproc
-from yolox.exp import get_exp
-from yolox.utils import fuse_model, get_model_info, postprocess
-from yolox.utils.visualize import plot_tracking
+from botsort.yolox.data.data_augment import preproc
+from botsort.yolox.exp import get_exp
+from botsort.yolox.utils import fuse_model, get_model_info, postprocess
+from botsort.yolox.utils.visualize import plot_tracking
 
 from botsort.tracker.mc_bot_sort import BoTSORT
 from botsort.tracker.tracking_utils.timer import Timer

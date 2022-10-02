@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 import torch
 
-from yolox.utils import (
+from botsort.yolox.utils import (
     gather,
     is_main_process,
     postprocess,
@@ -827,13 +827,13 @@ class MOTEvaluator:
             cocoDt = cocoGt.loadRes(tmp)
             '''
             try:
-                from yolox.layers import COCOeval_opt as COCOeval
+                from botsort.yolox.layers import COCOeval_opt as COCOeval
             except ImportError:
                 from pycocotools import cocoeval as COCOeval
                 logger.warning("Use standard COCOeval.")
             '''
             #from pycocotools.cocoeval import COCOeval
-            from yolox.layers import COCOeval_opt as COCOeval
+            from botsort.yolox.layers import COCOeval_opt as COCOeval
             cocoEval = COCOeval(cocoGt, cocoDt, annType[1])
             cocoEval.evaluate()
             cocoEval.accumulate()

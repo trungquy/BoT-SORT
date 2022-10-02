@@ -18,7 +18,7 @@ def get_exp_by_file(exp_file):
 
 
 def get_exp_by_name(exp_name):
-    import yolox
+    import botsort.yolox
 
     yolox_path = os.path.dirname(os.path.dirname(yolox.__file__))
     filedict = {

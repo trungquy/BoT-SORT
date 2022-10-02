@@ -5,7 +5,7 @@
 import torch
 from torch.nn import Module
 
-from yolox.utils import LRScheduler
+from botsort.yolox.utils import LRScheduler
 
 import ast
 import pprint

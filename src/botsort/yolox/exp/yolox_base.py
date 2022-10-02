@@ -60,7 +60,7 @@ class Exp(BaseExp):
         self.nmsthre = 0.65
 
     def get_model(self):
-        from yolox.models import YOLOPAFPN, YOLOX, YOLOXHead
+        from botsort.yolox.models import YOLOPAFPN, YOLOX, YOLOXHead
 
         def init_yolo(M):
             for m in M.modules():
@@ -79,7 +79,7 @@ class Exp(BaseExp):
         return self.model
 
     def get_data_loader(self, batch_size, is_distributed, no_aug=False):
-        from yolox.data import (
+        from botsort.yolox.data import (
             COCODataset,
             DataLoader,
             InfiniteSampler,
@@ -185,7 +185,7 @@ class Exp(BaseExp):
         return self.optimizer
 
     def get_lr_scheduler(self, lr, iters_per_epoch):
-        from yolox.utils import LRScheduler
+        from botsort.yolox.utils import LRScheduler
 
         scheduler = LRScheduler(
             self.scheduler,
@@ -200,7 +200,7 @@ class Exp(BaseExp):
         return scheduler
 
     def get_eval_loader(self, batch_size, is_distributed, testdev=False):
-        from yolox.data import COCODataset, ValTransform
+        from botsort.yolox.data import COCODataset, ValTransform
 
         valdataset = COCODataset(
             data_dir=None,
@@ -231,7 +231,7 @@ class Exp(BaseExp):
         return val_loader
 
     def get_evaluator(self, batch_size, is_distributed, testdev=False):
-        from yolox.evaluators import COCOEvaluator
+        from botsort.yolox.evaluators import COCOEvaluator
 
         val_loader = self.get_eval_loader(batch_size, is_distributed, testdev=testdev)
         evaluator = COCOEvaluator(

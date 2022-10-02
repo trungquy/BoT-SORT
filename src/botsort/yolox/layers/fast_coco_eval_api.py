@@ -10,7 +10,7 @@ from pycocotools.cocoeval import COCOeval
 
 # import torch first to make yolox._C work without ImportError of libc10.so
 # in YOLOX, env is already set in __init__.py.
-from yolox import _C
+from botsort.yolox import _C
 
 import copy
 import time

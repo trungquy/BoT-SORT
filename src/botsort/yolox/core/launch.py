@@ -11,8 +11,8 @@ import torch
 import torch.distributed as dist
 import torch.multiprocessing as mp
 
-import yolox.utils.dist as comm
-from yolox.utils import configure_nccl
+import botsort.yolox.utils.dist as comm
+from botsort.yolox.utils import configure_nccl
 
 import os
 import subprocess
