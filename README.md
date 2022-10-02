@@ -2,7 +2,7 @@
 
 This is a fork of [NirAharon/BoT-SORT](https://github.com/NirAharon/BoT-SORT) which is modified for use as a Python package and is not affiliated with the original authors.
 
-Some small changes were made to the tracking parameters, but these are customisable using the config object.
+Some small changes were made to the tracking parameters, but these are customisable using the config object. To only use the essentials, install deps from `inference-requirements.txt`.
 
 #### Basic Usage:
 

@@ -7,7 +7,7 @@ def load_requirements(path='requirements.txt', comment_char='#'):
 
 setup(
     name='botsort',
-    version='0.1.0',
+    version='0.2.0',
     maintainer='Ash Hall',
     url='https://github.com/ashwhall/BoT-SORT',
     packages=find_packages('src'),
