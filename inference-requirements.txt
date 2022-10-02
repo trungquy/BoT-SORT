@@ -4,6 +4,7 @@ opencv-python
 numpy
 scipy
 lap
+cython
 cython_bbox
 pyyaml
 yacs
