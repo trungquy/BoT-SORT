@@ -4,6 +4,8 @@ This is a fork of [NirAharon/BoT-SORT](https://github.com/NirAharon/BoT-SORT) wh
 
 Some small changes were made to the tracking parameters, but these are customisable using the config object. To only use the essentials, install deps from `inference-requirements.txt`.
 
+**NOTE**: You must install `cython` and `numpy` separately, due to them being build-time dependencies of `cython_bbox`. If you find a better way, let me know!
+
 #### Basic Usage:
 
 ```python

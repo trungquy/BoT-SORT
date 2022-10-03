@@ -6,6 +6,7 @@ scipy
 lap
 cython
 cython_bbox
+numpy
 pyyaml
 yacs
 faiss-gpu
