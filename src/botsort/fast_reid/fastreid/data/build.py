@@ -9,7 +9,10 @@ import os
 
 import torch
 from torch._six import string_classes
-from collections import Mapping
+try:
+    from collections.abc import Mapping
+except ImportError:
+    from collections import Mapping
 
 from botsort.fast_reid.fastreid.config import configurable
 from botsort.fast_reid.fastreid.utils import comm
