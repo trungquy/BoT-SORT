@@ -6,7 +6,15 @@ Some small changes were made to the tracking parameters, but these are customisa
 
 **NOTE**: If you want to use `cython_bbox` for accelerated IOU calculations, you must install `cython` and `numpy` separately, and have `gcc` in your path before installing it. Otherwise, a (vectorised) numpy implementation will be used. If you find a better way, let me know!
 
-#### Basic Usage:
+### Installation
+
+Either clone and install using the local path, or install directly from GitHub using `pip`:
+
+```bash
+$ pip install botsort@git+https://github.com/ashwhall/BoT-SORT.git
+```
+
+### Basic Usage:
 
 ```python
 import numpy as np
