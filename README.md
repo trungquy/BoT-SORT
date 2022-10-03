@@ -4,7 +4,7 @@ This is a fork of [NirAharon/BoT-SORT](https://github.com/NirAharon/BoT-SORT) wh
 
 Some small changes were made to the tracking parameters, but these are customisable using the config object. To only use the essentials, install deps from `inference-requirements.txt`.
 
-**NOTE**: You must install `cython` and `numpy` separately, due to them being build-time dependencies of `cython_bbox`. If you find a better way, let me know!
+**NOTE**: If you want to use `cython_bbox` for accelerated IOU calculations, you must install `cython` and `numpy` separately, and have `gcc` in your path before installing it. Otherwise, a (vectorised) numpy implementation will be used. If you find a better way, let me know!
 
 #### Basic Usage:
 
@@ -21,6 +21,8 @@ online_tracks = botsort.update(detections, image)
 ```
 
 ---
+
+## Original README:
 
 > [**BoT-SORT: Robust Associations Multi-Pedestrian Tracking**](https://arxiv.org/abs/2206.14651)
 >

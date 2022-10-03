@@ -3,8 +3,35 @@ import scipy
 import lap
 from scipy.spatial.distance import cdist
 
-from cython_bbox import bbox_overlaps as bbox_ious
 from botsort.tracker import kalman_filter
+try:
+    from cython_bbox import bbox_overlaps as bbox_ious
+except ImportError:
+    # fallback to python if cython is not available
+    def bbox_ious(boxes: np.ndarray, query_boxes: np.ndarray):
+        """
+        Parameters
+        ----------
+        boxes: (N, 4) ndarray of float
+        query_boxes: (K, 4) ndarray of float
+        Returns
+        -------
+        overlaps: (N, K) ndarray of overlap between boxes and query_boxes
+        """
+        x11, y11, x12, y12 = np.split(boxes, 4, axis=1)
+        x21, y21, x22, y22 = np.split(query_boxes, 4, axis=1)
+
+        xA = np.maximum(x11, np.transpose(x21))
+        yA = np.maximum(y11, np.transpose(y21))
+        xB = np.minimum(x12, np.transpose(x22))
+        yB = np.minimum(y12, np.transpose(y22))
+
+        interArea = np.maximum((xB - xA + 1), 0) * np.maximum((yB - yA + 1), 0)
+        boxAArea = (x12 - x11 + 1) * (y12 - y11 + 1)
+        boxBArea = (x22 - x21 + 1) * (y22 - y21 + 1)
+        iou = interArea / (boxAArea + np.transpose(boxBArea) - interArea)
+        
+        return iou
 
 
 def merge_matches(m1, m2, shape):
