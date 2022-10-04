@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from pathlib import Path
 import torch
-from .tracker.bot_sort import BoTSORT
+from botsort.tracker.bot_sort import BoTSORT
 
 DIR = Path(__file__).parent
 
