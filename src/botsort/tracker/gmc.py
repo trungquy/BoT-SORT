@@ -135,7 +135,6 @@ class GMC:
 
         keypoints = self.detector.detect(frame, mask)
         # Randomly sample up to 1000 keypoints
-        print(len(keypoints))
         if len(keypoints) > 1000:
             import random
             keypoints = random.sample(keypoints, 1000)
