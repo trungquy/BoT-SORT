@@ -8,5 +8,5 @@ cython
 numpy
 pyyaml
 yacs
-faiss-gpu
+faiss-cpu
 pillow
